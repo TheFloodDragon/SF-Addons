@@ -1,0 +1,4 @@
+name: SF-Addons
+version: '${project.version}'
+main: cn.fd.sfaddons.SF_Addons
+api-version: 1.19
