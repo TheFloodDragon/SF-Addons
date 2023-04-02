@@ -1,4 +1,7 @@
 name: SF-Addons
 version: '${project.version}'
-main: cn.fd.sfaddons.SF_Addons
+description: 粘液科技扩展插件
+main: cn.fd.sfaddons.AddonsPlugin
+author: TheFloodDragon #QQ: 1610105206
 api-version: 1.19
+depend: [ Slimefun ]

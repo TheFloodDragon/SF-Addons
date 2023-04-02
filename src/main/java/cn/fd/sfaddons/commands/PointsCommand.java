@@ -1,2 +1,4 @@
-package cn.fd.sfaddons.commands;public class PointsCommand {
+package cn.fd.sfaddons.commands;
+
+public class PointsCommand {
 }

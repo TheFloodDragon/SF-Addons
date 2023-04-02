@@ -1,4 +1,4 @@
-package cn.fd.sfaddons;
+package cn.fd.sfaddons.configs;
 
 import org.bukkit.configuration.file.FileConfiguration;
 

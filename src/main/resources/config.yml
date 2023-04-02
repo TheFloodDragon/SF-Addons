@@ -1,0 +1,15 @@
+#研究点数系统
+#需要配合魔改版粘液科技插件使用
+#链接: https://github.com/MCJiaoLong/Slimefun4-Improve
+ResearchPoints:
+  enable: true
+  #获取方式,格式为 <Action-动作>;<Points-得到的点数>;[Conditions-附加条件]
+  #支持的动作如下
+  #| getExps——获取到经验时增长研究点数,<Points>表示为一点经验可以获得多少研究点数
+  getWays:
+    - get_Exp;30
+
+Database:
+  #数据储存类型——只有SQLite
+  #纯纯因为我懒
+  StorageType: SQLite
