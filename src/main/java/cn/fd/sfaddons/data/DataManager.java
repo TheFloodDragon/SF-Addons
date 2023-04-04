@@ -1,15 +1,11 @@
 package cn.fd.sfaddons.data;
 
 import cn.fd.sfaddons.AddonsPlugin;
-import cn.fd.sfaddons.points.PlayerData;
-import cn.fd.sfaddons.utils.Utils;
+import cn.fd.sfaddons.ReachPoint.PlayerData;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static cn.fd.sfaddons.utils.Utils.log;
@@ -36,28 +32,18 @@ public class DataManager {
             return false;
         }
 
-//
-//        if (XConomyLoad.Config.SYNCDATA_TYPE.equals(SyncChannalType.REDIS)) {
-//            if (RedisConnection.connectredis()) {
-//                RedisThread rThread = new RedisThread();
-//                rThread.start();
-//            } else {
-//                return false;
-//            }
-//        }
-
-//        ImportData.isExitsFile();
-
         return true;
     }
 
-
-    public static void deletePlayerData(UUID u) {
-        SQL.deletePlayerData(u.toString());
-    }
-
-    public static void save(PlayerData pd, Boolean isAdd, BigDecimal amount) {
-        SQL.save(pd);
+    public static boolean save(PlayerData pd) {
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            //如果玩家注册(进入)过服务器,则保存数据
+            if (player.getUniqueId().equals(pd.getUniqueId())) {
+                SQL.saveData(pd);
+                return true;
+            }
+        }
+        return false;
     }
 
     public static <T> void getPlayerData(T key) {
@@ -66,20 +52,6 @@ public class DataManager {
         } else if (key instanceof String) {
             SQL.getPlayerData((String) key);
         }
-    }
-
-    public static void saveAll(String targetType, BigDecimal amount) {
-        Utils.runTaskAsynchronously(() -> {
-            if (targetType.equalsIgnoreCase("all")) {
-                SQL.saveAll(targetType, null, amount);
-            } else if (targetType.equalsIgnoreCase("online")) {
-                List<UUID> ol = new ArrayList<>();
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    ol.add(player.getUniqueId());
-                }
-                SQL.saveAll(targetType, ol, amount);
-            }
-        });
     }
 
 

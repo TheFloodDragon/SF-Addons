@@ -11,17 +11,11 @@ import static cn.fd.sfaddons.utils.Utils.log;
 
 public class DatabaseConnection {
 
-    private String driver = "org.sqlite.JDBC";
+    private final String driver = "org.sqlite.JDBC";
 
     public static final File dataFolder = new File(AddonsPlugin.getInstance().getDataFolder(), "playerdata");
-    //private String url = "";
-    //    private final int maxPoolSize = DataBaseConfig.config.getInt("Pool-Settings.maximum-pool-size");
-//    private final int minIdle = DataBaseConfig.config.getInt("Pool-Settings.minimum-idle");
-//    private final int maxLife = DataBaseConfig.config.getInt("Pool-Settings.maximum-lifetime");
-//    private final Long idleTime = DataBaseConfig.config.getLong("Pool-Settings.idle-timeout");
-    private boolean secon = false;
 
-    //public int waittimeout = 10;
+    private boolean secon = false;
 
     public File userdata = new File(dataFolder, "data.db");
 

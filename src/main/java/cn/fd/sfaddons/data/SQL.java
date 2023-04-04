@@ -1,23 +1,17 @@
 package cn.fd.sfaddons.data;
 
-import cn.fd.sfaddons.points.PlayerData;
+import cn.fd.sfaddons.ReachPoint.PlayerData;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
-import java.util.List;
 import java.util.UUID;
 
 public class SQL {
 
     public static String tableName = "sfaddons";
-    public static String tableNonPlayerName = "sfaddonsnon";
-    public static String tableRecordName = "sfaddonsrecord";
-    public static String tableUUIDName = "sfaddonsuuid";
-    public static String tableLoginName = "sfaddonslogin";
-    public final static DatabaseConnection database = new DatabaseConnection();
-    static final String encoding = "utf8";
 
-    public static boolean hasnonplayerplugin = false;
+    public final static DatabaseConnection database = new DatabaseConnection();
 
 
     public static boolean con() {
@@ -37,9 +31,9 @@ public class SQL {
                 return;
             }
 
-            String query = "create table if not exists " + tableName +
-                    "(UID varchar(50) not null, player varchar(50) not null, rpoints double(20,2) not null, " +
-                    "primary key (UID));";
+            String query = "CREATE TABLE IF NOT EXISTS " + tableName +
+                    "(UID varchar(50) NOT NULL, player varchar(50) NOT NULL, repoint double(20,2) NOT NULL, " +
+                    "PRIMARY KEY (UID));";
 
             statement.executeUpdate(query);
 
@@ -53,19 +47,17 @@ public class SQL {
     public static void getPlayerData(UUID uuid) {
         try {
             Connection connection = database.getConnectionAndCheck();
-            String sql = "select * from " + tableName + " where UID = ?";
+            String sql = "SELECT * FROM " + tableName + " WHERE UID = ?";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, uuid.toString());
 
             ResultSet rs = statement.executeQuery();
-//            if (rs.next()) {
-//                UUID fuuid = uuid;
-//
-//                BigDecimal cacheThisAmt = DataFormat.formatString(rs.getString(3));
-//                PlayerData bd = new PlayerData(fuuid, rs.getString(2), cacheThisAmt);
-//                Cache.insertIntoCache(fuuid, bd);
-//            }
+            if (rs.next()) {
+                BigDecimal cacheThisAmt = new BigDecimal(rs.getString(3)).setScale(2, RoundingMode.DOWN);
+                PlayerData bd = new PlayerData(uuid, rs.getString(2), cacheThisAmt);
+                Cache.insertIntoCache(uuid, bd);
+            }
 
             rs.close();
             statement.close();
@@ -78,102 +70,67 @@ public class SQL {
     public static void getPlayerData(String name) {
         try {
             Connection connection = database.getConnectionAndCheck();
-            String query = "select * from " + tableName + " where player = ?";
+            String query = "SELECT * FROM " + tableName + " WHERE player = ?";
 
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, name);
             ResultSet rs = statement.executeQuery();
-//            while (rs.next()) {
-//                UUID uuid = UUID.fromString(rs.getString(1));
-//                UUID puuid = null;
-//
-//                String username = rs.getString(2);
-//                BigDecimal cacheThisAmt = DataFormat.formatString(rs.getString(3));
-//                if (cacheThisAmt != null) {
-//                    PlayerData bd = new PlayerData(uuid, username, cacheThisAmt);
-//                    Cache.insertIntoCache(uuid, bd);
-//                }
-//                break;
-//            }
+
+            if (rs.next()) {
+                UUID uuid = UUID.fromString(rs.getString(1));
+                String username = rs.getString(2);
+                BigDecimal cacheThisAmt = new BigDecimal(rs.getString(3)).setScale(2, RoundingMode.DOWN);
+                Cache.insertIntoCache(uuid, new PlayerData(uuid, username, cacheThisAmt));
+            }
 
             rs.close();
             statement.close();
-        } catch (
-                SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
 
-    public static void save(PlayerData pd) {
+    protected static void saveData(PlayerData pd) {
         Connection connection = database.getConnectionAndCheck();
         try {
-            String query = " set rpoints = ? where UID = ?";
 
-            PreparedStatement statement = connection.prepareStatement("update " + tableName + query);
-            statement.setDouble(1, pd.getPoints().doubleValue());
+            String query = " SET repoint = ? WHERE UID = ?";
 
+            PreparedStatement statement = connection.prepareStatement("UPDATE " + tableName + query);
+            statement.setDouble(1, pd.getRepoint().doubleValue());
             statement.setString(2, pd.getUniqueId().toString());
-            statement.executeUpdate();
+
+            PreparedStatement checker = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE UID = ?");
+            checker.setString(1, pd.getUniqueId().toString());
+            //检查是否存在该数据
+            //如果没有,则创建;如果有,则执行更新命令
+            if (checker.executeQuery().next())
+                statement.execute();
+            else createData(pd);
+
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void saveAll(String targetType, List<UUID> players, BigDecimal amount) {
+    private static void createData(PlayerData pd) {
         Connection connection = database.getConnectionAndCheck();
         try {
-            if (targetType.equalsIgnoreCase("all")) {
-                String query;
-                if (amount.compareTo(new BigDecimal(0)) == 0) {
-                    query = " set rpoints = rpoints + " + amount.doubleValue();
-                } else {
-                    query = " set rpoints = rpoints - " + amount.doubleValue();
-                }
-                PreparedStatement statement = connection.prepareStatement("update " + tableName + query);
-                statement.executeUpdate();
-                statement.close();
-            } else if (targetType.equalsIgnoreCase("online")) {
-                StringBuilder query;
-                if (amount.compareTo(new BigDecimal(0)) == 0) {
-                    query = new StringBuilder(" set rpoints = rpoints + " + amount + " where");
-                } else {
-                    query = new StringBuilder(" set rpoints = rpoints - " + amount + " where");
-                }
-                int jsm = players.size();
-                int js = 1;
+            String query = "INSERT INTO " + tableName + "(UID,player,repoint) values(?,?,?)";
 
-                for (UUID u : players) {
-                    if (js == jsm) {
-                        query.append(" UID = '").append(u.toString()).append("'");
-                    } else {
-                        query.append(" UID = '").append(u.toString()).append("' OR");
-                        js = js + 1;
-                    }
-                }
-                PreparedStatement statement = connection.prepareStatement("update " + tableName + query);
-                statement.executeUpdate();
-                statement.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public static void deletePlayerData(String UUID) {
-        Connection connection = database.getConnectionAndCheck();
-        try {
-            String query = "delete from " + tableName + " where UID = ?";
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, UUID);
+            statement.setString(1, pd.getUniqueId().toString());
+            statement.setString(2, pd.getName());
+            statement.setDouble(3, pd.getRepoint().doubleValue());
+
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
 }

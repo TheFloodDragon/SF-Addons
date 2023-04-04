@@ -3,6 +3,7 @@ package cn.fd.sfaddons.utils;
 import cn.fd.sfaddons.AddonsPlugin;
 
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Utils {
@@ -19,14 +20,12 @@ public class Utils {
 
     public static void log(String msg, int type) {
         Logger logger = AddonsPlugin.getInstance().getLogger();
-        switch (type) {
-            case 0:
-                logger.info(msg);
-            case 1:
-                //logger.warning(msg);
-            case 2:
-                //logger.severe(msg);
-        }
+        if (type == 0)
+            logger.log(Level.INFO, msg);
+        else if (type == 1)
+            logger.log(Level.WARNING, msg);
+        else if (type == 2)
+            logger.log(Level.SEVERE, msg);
     }
 
     public static void runTaskAsynchronously(Runnable runnable) {

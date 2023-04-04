@@ -1,8 +1,9 @@
-package cn.fd.sfaddons.points;
+package cn.fd.sfaddons.ReachPoint;
 
 import cn.fd.sfaddons.AddonsPlugin;
 import cn.fd.sfaddons.listeners.ActionListeners;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,7 +15,7 @@ public class PointsManager {
 
     //加载所有方式
     public static void loadWays() {
-        for (String way : AddonsPlugin.conf.rPoints_ways) {
+        for (String way : AddonsPlugin.conf.rePoints_ways) {
             PWay parsed = parseWay(way);
             if (parsed != null) {
                 pWayList.add(parsed);
@@ -22,34 +23,34 @@ public class PointsManager {
         }
     }
 
-    public static PWay parseWay(String way) {
-        String[] pway = way.split(";");
+    public static PWay parseWay(String ways) {
+        String[] way = ways.split(";");
         Action action;
         List<String> conditions = new ArrayList<>();
         double points;
         try {
-            points = Double.parseDouble(pway[1]);
+            points = Double.parseDouble(way[1]);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
         //获取Action
-        switch (pway[0].toLowerCase()) {
+        switch (way[0].toLowerCase()) {
             case "get_exp":
                 action = Action.GET_EXP;
                 break;
             default:
-                throw new IllegalStateException("Unexpected value: " + pway[0]);
+                throw new IllegalStateException("Unexpected value: " + way[0]);
         }
         //条件检测
-        if (way.length() == 3) {
-            if (!pway[2].startsWith("[") && !pway[2].endsWith("]")) {
-                conditions.addAll(Arrays.asList(pway[2].split(",")));
-            } else conditions = Collections.singletonList(pway[2]);
+        if (ways.length() == 3) {
+            if (!way[2].startsWith("[") && !way[2].endsWith("]")) {
+                conditions.addAll(Arrays.asList(way[2].split(",")));
+            } else conditions = Collections.singletonList(way[2]);
         }
 
-        return new PWay(action, points, conditions);
+        return new PWay(action, BigDecimal.valueOf(points), conditions);
     }
 
     public static void registerListeners() {

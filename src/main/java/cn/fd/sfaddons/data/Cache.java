@@ -1,31 +1,22 @@
 package cn.fd.sfaddons.data;
 
 
-import cn.fd.sfaddons.points.PlayerData;
+import cn.fd.sfaddons.ReachPoint.PlayerData;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Cache {
+
     public static final ConcurrentHashMap<UUID, PlayerData> pds = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, UUID> uuids = new ConcurrentHashMap<>();
 
-    private static final ConcurrentHashMap<UUID, UUID> m_uuids = new ConcurrentHashMap<>();
-
-
     public static void insertIntoCache(final UUID uuid, final PlayerData pd) {
         if (pd != null) {
-            if (pd.getName() != null && pd.getPoints() != null) {
+            if (pd.getName() != null && pd.getRepoint() != null) {
                 pds.put(uuid, pd);
                 uuids.put(pd.getName(), uuid);
             }
-        }
-    }
-
-    public static void insertIntoMultiUUIDCache(final UUID uuid, final UUID luuid) {
-        if (uuid != null && luuid != null && !uuid.toString().equals(luuid.toString())) {
-            m_uuids.put(luuid, uuid);
         }
     }
 
@@ -47,17 +38,8 @@ public class Cache {
         return pds.get(u);
     }
 
-
-    public static UUID getMultiUUIDCache(final UUID luuid) {
-        if (m_uuids.containsKey(luuid)) {
-            return m_uuids.get(luuid);
-        }
-        return null;
-    }
-
-    public static void updateIntoCache(final UUID uuid, final PlayerData pd, final BigDecimal points) {
-        pd.setPoints(points);
-        pds.put(uuid, pd);
+    public static void updateIntoCache(final PlayerData pd) {
+        pds.put(pd.getUniqueId(), pd);
     }
 
     @SuppressWarnings("all")
@@ -73,7 +55,6 @@ public class Cache {
     public static void clearCache() {
         pds.clear();
         uuids.clear();
-        m_uuids.clear();
     }
 
 

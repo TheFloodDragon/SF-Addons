@@ -6,7 +6,7 @@
 
     <groupId>cn.fd</groupId>
     <artifactId>SF-Addons</artifactId>
-    <version>1.0.0-SNAPSHOT-7</version>
+    <version>1.0.0-SNAPSHOT-16</version>
     <packaging>jar</packaging>
 
     <name>SF-Addons</name>
@@ -84,6 +84,12 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.0.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

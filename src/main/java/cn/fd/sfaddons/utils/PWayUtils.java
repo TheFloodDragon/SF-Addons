@@ -1,8 +1,9 @@
 package cn.fd.sfaddons.utils;
 
-import cn.fd.sfaddons.points.Action;
-import cn.fd.sfaddons.points.PWay;
+import cn.fd.sfaddons.ReachPoint.Action;
+import cn.fd.sfaddons.ReachPoint.PWay;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class PWayUtils {
@@ -19,13 +20,13 @@ public class PWayUtils {
 //        return false;
 //    }
 
-    public static double getPoints(List<PWay> ways, Action action) {
+    public static BigDecimal getRepointM(List<PWay> ways, Action action) {
         for (PWay way : ways) {
             if (isHaveAction(way, action)) {
-                return way.getPoints();
+                return way.getRepointM();
             }
         }
-        return 0;
+        return BigDecimal.valueOf(0);
     }
 
 
