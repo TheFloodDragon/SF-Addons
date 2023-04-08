@@ -1,10 +1,11 @@
 package cn.fd.sfaddons;
 
+import cn.fd.sfaddons.ReachPoint.ResearchPointManager;
 import cn.fd.sfaddons.config.ConfigManager;
 import cn.fd.sfaddons.config.MessagesManager;
 import cn.fd.sfaddons.data.DataManager;
 import cn.fd.sfaddons.data.SQL;
-import cn.fd.sfaddons.ReachPoint.PointsManager;
+import cn.fd.sfaddons.listeners.ListenerManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static cn.fd.sfaddons.utils.Utils.log;
@@ -21,9 +22,6 @@ public final class AddonsPlugin extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        //注册监听器
-        PointsManager.registerListeners();
-
         reload();
 
         //创建数据存储库
@@ -33,13 +31,6 @@ public final class AddonsPlugin extends JavaPlugin {
             this.getServer().getPluginManager().disablePlugin(this);
         }
 
-
-//        DataManager.save(new PlayerData(UUID.fromString("3c11403a-3a1a-386b-b72f-9b8826cb913e"), "MC_jiao_long", new BigDecimal(1)));
-//        PlayerData pd = DataCon.getPlayerData("MC_jiao_long");
-//        System.out.println(pd.getRepoint());
-//        DataCon.setData(pd.getUniqueId(),new BigDecimal(114514));
-//        pd = DataCon.getPlayerData("MC_jiao_long");
-//        System.out.println(pd.getRepoint());
     }
 
     @Override
@@ -48,10 +39,12 @@ public final class AddonsPlugin extends JavaPlugin {
     }
 
     public void reload() {
+        //注册监听器
+        ListenerManager.registerAll();
         //加载配置文件
         initConfigs();
         //加载研究点数获取方式
-        PointsManager.loadWays();
+        ResearchPointManager.load();
     }
 
     public void initConfigs() {

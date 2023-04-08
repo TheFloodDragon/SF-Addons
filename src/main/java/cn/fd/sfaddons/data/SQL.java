@@ -1,10 +1,12 @@
 package cn.fd.sfaddons.data;
 
 import cn.fd.sfaddons.ReachPoint.PlayerData;
+import org.bukkit.Bukkit;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.*;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SQL {
@@ -53,11 +55,16 @@ public class SQL {
             statement.setString(1, uuid.toString());
 
             ResultSet rs = statement.executeQuery();
+
+
+            String name = Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName();
             if (rs.next()) {
                 BigDecimal cacheThisAmt = new BigDecimal(rs.getString(3)).setScale(2, RoundingMode.DOWN);
-                PlayerData bd = new PlayerData(uuid, rs.getString(2), cacheThisAmt);
+//                PlayerData bd = new PlayerData(uuid, rs.getString(2), cacheThisAmt);
+                PlayerData bd = new PlayerData(uuid, name, cacheThisAmt);
                 Cache.insertIntoCache(uuid, bd);
-            }
+            } else
+                Cache.insertIntoCache(uuid, new PlayerData(uuid, name, BigDecimal.valueOf(0)));
 
             rs.close();
             statement.close();
@@ -76,12 +83,14 @@ public class SQL {
             statement.setString(1, name);
             ResultSet rs = statement.executeQuery();
 
+            UUID uuid = Bukkit.getPlayer(name).getUniqueId();
             if (rs.next()) {
-                UUID uuid = UUID.fromString(rs.getString(1));
-                String username = rs.getString(2);
+//                UUID uuid = UUID.fromString(rs.getString(1));
+//                String username = rs.getString(2);
                 BigDecimal cacheThisAmt = new BigDecimal(rs.getString(3)).setScale(2, RoundingMode.DOWN);
-                Cache.insertIntoCache(uuid, new PlayerData(uuid, username, cacheThisAmt));
-            }
+                Cache.insertIntoCache(uuid, new PlayerData(uuid, name, cacheThisAmt));
+            } else
+                Cache.insertIntoCache(uuid, new PlayerData(uuid, name, BigDecimal.valueOf(0)));
 
             rs.close();
             statement.close();
