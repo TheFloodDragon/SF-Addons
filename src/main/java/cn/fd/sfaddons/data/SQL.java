@@ -2,8 +2,6 @@ package cn.fd.sfaddons.data;
 
 import cn.fd.sfaddons.ReachPoint.PlayerData;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.*;
 import java.util.UUID;
 
@@ -31,9 +29,7 @@ public class SQL {
                 return;
             }
 
-            String query = "CREATE TABLE IF NOT EXISTS " + tableName +
-                    "(UID varchar(50) NOT NULL, player varchar(50) NOT NULL, repoint double(20,2) NOT NULL, " +
-                    "PRIMARY KEY (UID));";
+            String query = "CREATE TABLE IF NOT EXISTS " + tableName + "(UID varchar(50) NOT NULL, player varchar(50) NOT NULL, repoint double(20,2) NOT NULL, " + "PRIMARY KEY (UID));";
 
             statement.executeUpdate(query);
 
@@ -54,7 +50,7 @@ public class SQL {
 
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                BigDecimal cacheThisAmt = new BigDecimal(rs.getString(3)).setScale(2, RoundingMode.DOWN);
+                double cacheThisAmt = Double.parseDouble(rs.getString(3));
                 PlayerData bd = new PlayerData(uuid, rs.getString(2), cacheThisAmt);
                 Cache.insertIntoCache(uuid, bd);
             }
@@ -79,8 +75,7 @@ public class SQL {
             if (rs.next()) {
                 UUID uuid = UUID.fromString(rs.getString(1));
                 String username = rs.getString(2);
-                BigDecimal cacheThisAmt = new BigDecimal(rs.getString(3)).setScale(2, RoundingMode.DOWN);
-                Cache.insertIntoCache(uuid, new PlayerData(uuid, username, cacheThisAmt));
+                Cache.insertIntoCache(uuid, new PlayerData(uuid, username, Double.parseDouble(rs.getString(3))));
             }
 
             rs.close();
@@ -98,15 +93,14 @@ public class SQL {
             String query = " SET repoint = ? WHERE UID = ?";
 
             PreparedStatement statement = connection.prepareStatement("UPDATE " + tableName + query);
-            statement.setDouble(1, pd.getRepoint().doubleValue());
+            statement.setDouble(1, pd.getRepoint());
             statement.setString(2, pd.getUniqueId().toString());
 
             PreparedStatement checker = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE UID = ?");
             checker.setString(1, pd.getUniqueId().toString());
             //检查是否存在该数据
             //如果没有,则创建;如果有,则执行更新命令
-            if (checker.executeQuery().next())
-                statement.execute();
+            if (checker.executeQuery().next()) statement.execute();
             else createData(pd);
 
             statement.close();
@@ -123,7 +117,7 @@ public class SQL {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, pd.getUniqueId().toString());
             statement.setString(2, pd.getName());
-            statement.setDouble(3, pd.getRepoint().doubleValue());
+            statement.setDouble(3, pd.getRepoint());
 
             statement.executeUpdate();
             statement.close();

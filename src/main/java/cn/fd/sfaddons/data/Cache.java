@@ -13,7 +13,7 @@ public class Cache {
 
     public static void insertIntoCache(final UUID uuid, final PlayerData pd) {
         if (pd != null) {
-            if (pd.getName() != null && pd.getRepoint() != null) {
+            if (pd.getName() != null && pd.getRepoint() != 0) {
                 pds.put(uuid, pd);
                 uuids.put(pd.getName(), uuid);
             }

@@ -3,7 +3,6 @@ package cn.fd.sfaddons.ReachPoint;
 import cn.fd.sfaddons.AddonsPlugin;
 import cn.fd.sfaddons.listeners.ActionListeners;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,7 +49,7 @@ public class PointsManager {
             } else conditions = Collections.singletonList(way[2]);
         }
 
-        return new PWay(action, BigDecimal.valueOf(points), conditions);
+        return new PWay(action, points, conditions);
     }
 
     public static void registerListeners() {

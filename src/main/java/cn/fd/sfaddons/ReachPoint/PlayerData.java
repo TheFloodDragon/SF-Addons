@@ -1,15 +1,14 @@
 package cn.fd.sfaddons.ReachPoint;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 public class PlayerData {
 
     private final String name;
-    private final BigDecimal repoint;
+    private final double repoint;
     private final UUID uuid;
 
-    public PlayerData(UUID uuid, String name, BigDecimal points) {
+    public PlayerData(UUID uuid, String name, double points) {
         this.uuid = uuid;
         this.name = name;
         this.repoint = points;
@@ -19,7 +18,7 @@ public class PlayerData {
         return name;
     }
 
-    public BigDecimal getRepoint() {
+    public double getRepoint() {
         return repoint;
     }
 

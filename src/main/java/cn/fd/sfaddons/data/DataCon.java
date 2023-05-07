@@ -4,7 +4,6 @@ import cn.fd.sfaddons.ReachPoint.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 import static cn.fd.sfaddons.utils.Utils.runTaskAsynchronously;
@@ -32,15 +31,15 @@ public class DataCon {
     }
 
 
-    public static boolean setData(String name, BigDecimal amount) {
+    public static boolean setData(String name, double amount) {
         return setDataI(name, amount);
     }
 
-    public static boolean setData(UUID uuid, BigDecimal amount) {
+    public static boolean setData(UUID uuid, double amount) {
         return setDataI(uuid, amount);
     }
 
-    private static <T> boolean setDataI(T p, BigDecimal amount) {
+    private static <T> boolean setDataI(T p, double amount) {
         PlayerData pd;
 
 //      我觉得我不会再碰这边的代码,所以不这么写

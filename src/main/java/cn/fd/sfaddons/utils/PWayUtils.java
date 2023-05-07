@@ -3,7 +3,6 @@ package cn.fd.sfaddons.utils;
 import cn.fd.sfaddons.ReachPoint.Action;
 import cn.fd.sfaddons.ReachPoint.PWay;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class PWayUtils {
@@ -20,13 +19,13 @@ public class PWayUtils {
 //        return false;
 //    }
 
-    public static BigDecimal getRepointM(List<PWay> ways, Action action) {
+    public static double getRepointM(List<PWay> ways, Action action) {
         for (PWay way : ways) {
             if (isHaveAction(way, action)) {
                 return way.getRepointM();
             }
         }
-        return BigDecimal.valueOf(0);
+        return 0.0;
     }
 
 
