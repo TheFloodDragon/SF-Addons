@@ -23,6 +23,10 @@ public class PlayerData {
         return repoint;
     }
 
+//    public void setRepoint(BigDecimal points) {
+//        this.repoint = points;
+//    }
+
     public UUID getUniqueId() {
         return uuid;
     }
